@@ -27,14 +27,56 @@ back over http/1 and upgrades to ws.
 
 ## Build
 
-This was built and tested againt esp-idf 0c50b65a34cd6b3954f7435193411a88adb49cb0.
+1) This was built and tested against esp-idf at 0c50b65a34cd6b3954f7435193411a88adb49cb0,
+from 2017-10-13.  You can force esp-idf to that commit by cloning / pulling / fetching
+the latest esp-idf and then doing `git reset --hard 0c50b65a34cd6b3954f7435193411a88adb49cb0`
+in the esp-idf directory.
 
-Clone and bring in the lws submodule (it's unpatched lws master)
+Esp-idf is in constant flux you may be able to use the latest without problems but if not,
+revert it to the above commit that has been tested before complaining.
+
+2) Esp-idf also has dependencies on toolchain, at the time of writing it recommends this toolchain version (for 64-bit linux)
+
+[1.22.0-73-ge28a011](https://dl.espressif.com/dl/xtensa-esp32-elf-linux64-1.22.0-73-ge28a011-5.2.0.tar.gz)
+
+3) Don't forget to do `git submodule init ; git submodule update --recursive` after fetching projects like esp-idf with submodules.
+
+4) After updating esp-idf, or this project or components, remove your old build dir with `rm -rf build` before rebuilding.
+
+### Step 0: Install prerequisites
+
+### 0.1: genromfs
+
+For Ubuntu / Debian and Fedora at least, the distro package is called "genromfs"
+
+Under Windows on MSYS2 environment you will need to separately build `genromfs` and add it to the path:
 
 ```
-  $ git clone git@github.com:warmcat/lws-esp32-test-server-demos.git
-  $ git submodule update --init --recursive
+git clone https://github.com/chexum/genromfs.git
+make
+cp genromfs /mingw32/bin/
 ```
+
+### 0.2: recent CMake
+
+CMake v2.8 is too old... v3.7+ are known to work OK and probably other intermediate versions are OK.
+
+Under Windows on MSYS2 environment you will need to install cmake: `pacman -S mingw-w64-i686-cmake`
+
+### 0.3: OSX users: GNU stat
+
+```
+     $ brew install coreutils
+```
+
+### Step 1: Clone and get lws submodule
+
+```
+     $ git clone git@github.com:warmcat/lws-esp32-factory.git
+     $ git submodule update --init --recursive
+```
+
+### Step 2: Build and Flash OTA Partition
 
 ```
  $ make flash_ota ; make monitor
